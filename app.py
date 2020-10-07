@@ -139,7 +139,7 @@ def set_temp():
     temperature_today.set_values(high, low, datetime.now().date(), icon, detailed_forecast)
 
 
-@app.route("/st")
+@app.route("/")
 def st():
     
 
