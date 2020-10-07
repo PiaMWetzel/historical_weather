@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href={{url_for('static', filename='css/style.css')}}/>
+</head>
+<body>
+    <header><span class = "name_txt">IsIt<span id="hot">Hot</span>In<span id="city">LA</span>Today<span id = "qm">?</span></span></header>
+    <div class="container">
+        <div class = "past_temp_container white_">Forecast for<span class = "date_hl"> {{past_temp_info.current_date}}</span></div>
+        <div class = "todays_weather_container">
+            <div class = "todays_img_container"><img src ="{{icon}}"/></div>
+            <div class = "todays_temp_container">
+                <div class= "temperature_value_container"><span class="high">High:</span><span id= "high_value">{{high}}</span><span id= "high_value">&deg</span></div>
+                <div class= "temperature_value_container"><span class="low">Low:</span><span id= "low_value">{{low}}</span><span id= "low_value">&deg</span></div>
+                <div class = "detailed_forecast">{{detailed_forecast}}</div>
+            </div>
+        </div>
+        
+    <div class = "past_temp_container white_"><span class = "date_hl">{{past_temp_info.current_date}}</span> (Day)</div>
+    <div class = "flex-row">
+    <div class="past_temp_container high_"><span class = "higest_year"><div class = "hl">Hottest:</div> <div class="temp_hl">{{past_temp_info.highest_high}}&deg</div><div class = "year_hl">in <b>{{past_temp_info.date_highest_high}}</b></div></span></div>
+    <div class="past_temp_container low_"><span class = "higest_year"><div class = "hl2">Coldest:</div> <div class="temp_hl">{{past_temp_info.lowest_high}}&deg</div> <div class = "year_hl">in <b>{{past_temp_info.date_lowest_high}}</b></div></span></div>
+    </div>
+    <div class="past_temp_container plot"><img class = "scatterplot" src = {{url_for('static', filename='images/highs.png')}}/></div>
+    {% if past_temp_info.high_perc < 50 %}
+    <div class="past_temp_container conclusion _l">Today is colder than <b>{{100 - past_temp_info.high_perc}}%</b> of {{past_temp_info.current_date}}s since 1921</div>
+    {% else %}
+    <div class="past_temp_container conclusion">Today is hotter than <b>{{past_temp_info.high_perc}}%</b> of {{past_temp_info.current_date}}s since 1921</div>
+    {% endif %}
+    <div class = "past_temp_container white_"><span class = "date_hl">{{past_temp_info.current_date}}</span> (Night)</div>
+    <div class = "flex-row">
+    <div class="past_temp_container high_"><span class = "higest_year"><div class = "hl">Hottest:</div> <div class="temp_hl">{{past_temp_info.highest_low}}&deg</div> <div class = "year_hl">in <b>{{past_temp_info.date_highest_low}}</b></div></span></div>
+    <div class="past_temp_container low_"><span class = "higest_year"><div class = "hl2">Coldest:</div> <div class="temp_hl">{{past_temp_info.lowest_low}}&deg</div> <div class = "year_hl"> in <b>{{past_temp_info.date_lowest_low}}</b> </div></span></div>
+    </div>
+    <div class="past_temp_container plot"><img class = "scatterplot" src = {{url_for('static', filename='images/lows.png')}}/></div>
+    {% if past_temp_info.low_perc < 50 %}
+    <div class="past_temp_container conclusion _l">Tonight is colder than <b>{{100 - past_temp_info.low_perc}}%</b> of {{past_temp_info.current_date}}s since 1921</div>
+    {% else %}
+    <div class="past_temp_container conclusion">Tonight is hotter than <b>{{past_temp_info.low_perc}}%</b> of {{past_temp_info.current_date}}s since 1921</div>
+    {% endif %}
+    
+</div>
+    
+    <footer></footer>
+</body>
+</html>
