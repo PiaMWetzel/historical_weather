@@ -87,12 +87,16 @@ footer
     margin-bottom: 15px;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
     border: 10px solid #333333;
     border-radius: 5px;
     padding: 2em;
     background-color: white;
     filter: drop-shadow(0px 0px 5px black);
     font-family: Tahoma, Geneva, sans-serif;
+    width: 40%;
 }
 
 .todays_img_container 
@@ -166,7 +170,8 @@ footer
     width: 17em;
     color: #a8a8a8;
     font-size: 0.75em;
-    margin-left: 0.5em;
+    text-align: center;
+
 }
 
 .past_temp_container
