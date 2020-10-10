@@ -250,10 +250,14 @@ def scheduled():
     global temp_data
     temp_data = start()
 
+print('ytytyt')
+#scheduler executes 'start()' function once per day 
+#to collect new temperature data
+scheduler.start()
+scheduled()
+job = scheduler.add_job(scheduled, "cron", hour=0, minute=1)
+
 if __name__ == "__main__":
-    #scheduler executes 'start()' function once per day 
-    #to collect new temperature data
-    scheduler.start()
-    scheduled()
-    job = scheduler.add_job(scheduled, "cron", hour=0, minute=1)
+
+    print('runnint')
     app.run()
