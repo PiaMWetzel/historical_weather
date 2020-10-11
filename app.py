@@ -196,7 +196,7 @@ def start():
     #s3.upload_file(Filename='csv/CA_LA_USC.csv', Bucket = "weather-csv-store", Key = "CA_LA_USC.csv")
     print(s3.list_buckets())
 
-    la_temps = pd.read_csv("csv_file)
+    la_temps = pd.read_csv(csv_file)
 
     #file was already updated
     updated = False
