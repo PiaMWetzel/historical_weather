@@ -9,7 +9,17 @@ from Temperature import Temperature
 import matplotlib.pyplot as plt
 from apscheduler.schedulers.background import BackgroundScheduler
 
+import boto3, os
+from config import S3_BUCKET, S3_KEY, S3_SECRET_ACCESS_KEY
 
+
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+s3 = boto3.client('s3', 
+region_name='us-east-1', 
+aws_access_key_id=os.environ.get("access_key"),
+aws_secret_access_key=os.environ.get("secret_key"))
 app = Flask(__name__)
 scheduler = BackgroundScheduler()
 temp_data = {}
@@ -72,6 +82,8 @@ def get_plot(todays_temps):
 def error():
     return render_template("error.html")
 
+
+
 #accesses the National Weather Service API to gather today's temperature low, high,
 #icon, and detailed forecast
 def get_lows_and_highs():
@@ -86,6 +98,7 @@ def get_lows_and_highs():
 
 #creates dictionary from data in .csv file for faster lookup
 def fill_dict():
+    global temp_data
     temp_data = {
         month + " " + str(day): []
         for month in days_in_month.keys()
@@ -156,24 +169,47 @@ def add_temperature_to_file():
     date = temperature_today.get_date()
     high = temperature_today.get_high()
     low = temperature_today.get_low()
+    df = temperature_today.get_detailed_forecast()
+    icon = temperature_today.get_icon()
 
     date_str = date.strftime("%Y-%m-%d")
-    df1 = pd.read_csv("csv/" + csv_file)
+    df1 = pd.read_csv("csv/"+csv_file)
     df2 = pd.DataFrame(
-        [["NA", "Downtown USC", date, high, low]],
-        columns=["STATION", "NAME", "DATE", "TMAX", "TMIN"],
+        [["NA", "Downtown USC", date, high, low, df, icon]],
+        columns=["STATION", "NAME", "DATE", "TMAX", "TMIN", "DF","ICON"],
     )
     last_saved_date = df1["DATE"][len(df1["DATE"]) - 1]
 
     if last_saved_date != date_str:
         df3 = df1.append(df2, ignore_index=True)
         df3.to_csv("csv/" + csv_file, index=False)
+        s3.upload_file(Filename='csv/CA_LA_USC.csv', Bucket = "weather-csv-store", Key = "CA_LA_USC.csv")
 
 #is executed once per day to gather new temperature data
 def start():
 
+    # scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+    # creds = ServiceAccountCredentials.from_json_keyfile_name('weather.json', scope)
+    # client = gspread.authorize(creds)
+    # sheet = client.open("CA_LA_USC").sheet1
+    # data = sheet.get_all_records()
+    # print(data)
+
+    if not os.path.exists('csv/CA_LA_USC.csv'):
+        s3.download_file(Filename='csv/CA_LA_USC.csv', Bucket = "weather-csv-store", Key = "CA_LA_USC.csv")
+    #s3.upload_file(Filename='csv/CA_LA_USC.csv', Bucket = "weather-csv-store", Key = "CA_LA_USC.csv")
+    print(s3.list_buckets())
+
     la_temps = pd.read_csv("csv/" + csv_file)
+
+    #file was already updated
+    updated = False
+    if(la_temps['DATE'][len(la_temps)-1] == datetime.now().date().strftime("%Y-%m-%d")):
+        updated = True
+        set_temp(la_temps['TMAX'][len(la_temps)-1], la_temps['TMIN'][len(la_temps)-1], la_temps['ICON'][len(la_temps)-1], la_temps['DF'][len(la_temps)-1])
+
     test = []
+
     temp_data = fill_dict()
 
     months = list(days_in_month.keys())
@@ -186,16 +222,19 @@ def start():
             {year: {"tmax": tmax, "tmin": tmin}}
         )
         test.append(months[int(month) - 1])
-    # set temperature
-    set_temp()
-    # add new forecast to file
-    add_temperature_to_file()
 
+    #if file/temperature is not taken care of...
+    if not updated:
+        # set temperature
+        high, low, icon, detailed_forecast = get_lows_and_highs()
+        set_temp(high, low, icon, detailed_forecast)
+        # add new forecast to file
+        add_temperature_to_file()
     return temp_data
 
 #creates new temperature object with current day's temperature values
-def set_temp():
-    high, low, icon, detailed_forecast = get_lows_and_highs()
+def set_temp(high, low, icon, detailed_forecast):
+
     temperature_today.set_values(
         high, low, datetime.now().date(), icon, detailed_forecast
     )
@@ -211,6 +250,7 @@ def st():
     icon = temperature_today.get_icon()
     detailed_forecast = temperature_today.get_detailed_forecast()
     date = temperature_today.get_month_day()
+
     # max_temp, max_year, tmax_hotter_than, min_temp, min_year,tmin_hotter_than = find_hottest_day(temp_data)
     max_high, min_high, high_perc, max_high_date, min_high_date = get_high_min_max(
         temp_data[date]
@@ -250,7 +290,7 @@ def scheduled():
     global temp_data
     temp_data = start()
 
-print('ytytyt')
+
 #scheduler executes 'start()' function once per day 
 #to collect new temperature data
 scheduler.start()
@@ -258,6 +298,4 @@ scheduled()
 job = scheduler.add_job(scheduled, "cron", hour=0, minute=1)
 
 if __name__ == "__main__":
-
-    print('runnint')
     app.run()
