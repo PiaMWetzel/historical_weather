@@ -169,7 +169,7 @@ def add_temperature_to_file():
     icon = temperature_today.get_icon()
 
     date_str = date.strftime("%Y-%m-%d")
-    df1 = pd.read_csv("csv/"+csv_file)
+    df1 = pd.read_csv(csv_file)
     df2 = pd.DataFrame(
         [["NA", "Downtown USC", date, high, low, df, icon]],
         columns=["STATION", "NAME", "DATE", "TMAX", "TMIN", "DF","ICON"],
@@ -178,8 +178,8 @@ def add_temperature_to_file():
 
     if last_saved_date != date_str:
         df3 = df1.append(df2, ignore_index=True)
-        df3.to_csv("csv/" + csv_file, index=False)
-        s3.upload_file(Filename='csv/CA_LA_USC.csv', Bucket = "weather-csv-store", Key = "CA_LA_USC.csv")
+        df3.to_csv( csv_file, index=False)
+        s3.upload_file(Filename='CA_LA_USC.csv', Bucket = "weather-csv-store", Key = "CA_LA_USC.csv")
 
 #is executed once per day to gather new temperature data
 def start():
@@ -191,12 +191,12 @@ def start():
     # data = sheet.get_all_records()
     # print(data)
 
-    if not os.path.exists('csv/CA_LA_USC.csv'):
-        s3.download_file(Filename='csv/CA_LA_USC.csv', Bucket = "weather-csv-store", Key = "CA_LA_USC.csv")
+    if not os.path.exists('CA_LA_USC.csv'):
+        s3.download_file(Filename='CA_LA_USC.csv', Bucket = "weather-csv-store", Key = "CA_LA_USC.csv")
     #s3.upload_file(Filename='csv/CA_LA_USC.csv', Bucket = "weather-csv-store", Key = "CA_LA_USC.csv")
     print(s3.list_buckets())
 
-    la_temps = pd.read_csv("csv/" + csv_file)
+    la_temps = pd.read_csv("csv_file)
 
     #file was already updated
     updated = False
