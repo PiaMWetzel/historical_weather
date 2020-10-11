@@ -8,13 +8,9 @@ import math, requests, json, pytz, time
 from Temperature import Temperature
 import matplotlib.pyplot as plt
 from apscheduler.schedulers.background import BackgroundScheduler
-
 import boto3, os
-from config import S3_BUCKET, S3_KEY, S3_SECRET_ACCESS_KEY
 
 
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
 
 s3 = boto3.client('s3', 
 region_name='us-east-1', 
