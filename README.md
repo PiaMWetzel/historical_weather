@@ -9,6 +9,8 @@ and how today's data compares - e.g. `Today is 66.7% hotter than previous Octobe
 Right now, the page concentrates on data of only one reporting station (downtown Los Angeles, near USC).   
 The medium-term goal is it to include reporting stations in all of southern California. 
 
+[Link to application on Heroku](https://isithotin.herokuapp.com/)
+
 ### FAQs:
 #### Where do you get the current weather data?  
 The current weather data (AKA today's highs and lows) are accessed via the National Weather Service's API
