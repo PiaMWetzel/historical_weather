@@ -6,8 +6,8 @@ IsItHotToday shows users how today's temperature highs and lows compare to histo
 The user sees the hottest and coldest highs and lows, a scatterplot with current and past data,  
 and how today's data compares - e.g. `Today is 66.7% hotter than previous October 8s`
 
-Right now, the page concentrates on data of only one reporting station (downtown Los Angeles, near USC). 
-Medium-term goal is it to include reporting stations in all of southern California. 
+Right now, the page concentrates on data of only one reporting station (downtown Los Angeles, near USC).   
+The medium-term goal is it to include reporting stations in all of southern California. 
 
 ### FAQs:
 #### Where to you get the current weather data?  
