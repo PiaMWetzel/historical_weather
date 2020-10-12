@@ -10,7 +10,7 @@ Right now, the page concentrates on data of only one reporting station (downtown
 The medium-term goal is it to include reporting stations in all of southern California. 
 
 ### FAQs:
-#### Where to you get the current weather data?  
+#### Where do you get the current weather data?  
 The current weather data (AKA today's highs and lows) are accessed via the National Weather Service's API
 #### Where do you get the historical weather data?
 The historical highs and lows are obtained from the National Climatic Data Center (no API)
